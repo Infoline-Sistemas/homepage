@@ -1,0 +1,179 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Infoline - Sistema ERP completo para otimizar a gestão do seu negócio. Automatize processos, integre departamentos e aumente a produtividade.">
+  <meta name="keywords" content="sistema ERP, Infoline, gestão empresarial, software ERP, automação de processos">
+  <title>Infoline - O ERP que Transforma sua Gestão Empresarial</title>
+  <!-- Tailwind CSS CDN for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .hero-bg {
+      background: linear-gradient(to right, #1e3a8a, #3b82f6);
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-10">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold text-blue-900">Infoline</div>
+      <div class="space-x-6">
+        <a href="#features" class="text-gray-700 hover:text-blue-600">Funcionalidades</a>
+        <a href="#testimonials" class="text-gray-700 hover:text-blue-600">Depoimentos</a>
+        <a href="#contact" class="text-gray-700 hover:text-blue-600">Contato</a>
+        <a href="#demo" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Teste Grátis</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-bg text-white py-20">
+    <div class="container mx-auto px-6 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">Infoline: O ERP que Simplifica sua Gestão</h1>
+      <p class="text-lg md:text-xl mb-8">Automatize processos, integre departamentos e tome decisões com dados em tempo real.</p>
+      <a href="#demo" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200">Agende uma Demonstração</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Por que Escolher o Infoline?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <svg class="w-12 h-12 mx-auto mb-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+          <h3 class="text-xl font-semibold mb-2">Integração Total</h3>
+          <p class="text-gray-600">Conecte finanças, vendas, estoque e mais em uma única plataforma.</p>
+        </div>
+        <div class="text-center">
+          <svg class="w-12 h-12 mx-auto mb-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          <h3 class="text-xl font-semibold mb-2">Relatórios em Tempo Real</h3>
+          <p class="text-gray-600">Acesse dados atualizados para decisões rápidas e estratégicas.</p>
+        </div>
+        <div class="text-center">
+          <svg class="w-12 h-12 mx-auto mb-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <h3 class="text-xl font-semibold mb-2">Custo Acessível</h3>
+          <p class="text-gray-600">Soluções escaláveis que cabem no orçamento da sua empresa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-16 bg-gray-100">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">O que Nossos Clientes Dizem</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+          <p class="text-gray-600 mb-4">"O Infoline transformou nossa operação. Conseguimos integrar todos os departamentos e reduzir custos em 30%."</p>
+          <p class="font-semibold">Ana Silva, CEO da TechVarejo</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <p class="text-gray-600 mb-4">"A interface é intuitiva e o suporte é excepcional. Recomendo para qualquer empresa que busca eficiência."</p>
+          <p class="font-semibold">João Mendes, Gerente da IndusPro</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section id="demo" class="py-16 bg-blue-600 text-white">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="text-3xl font-bold mb-4">Pronto para Transformar sua Gestão?</h2>
+      <p class="text-lg mb-8">Experimente o Infoline e veja como é fácil gerenciar seu negócio.</p>
+      <a href="#contact" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200">Solicite uma Demonstração</a>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Entre em Contato</h2>
+      <div class="max-w-lg mx-auto">
+        <form>
+          <div class="mb-4">
+            <label for="name" class="block text-gray-700 font-semibold mb-2">Nome</label>
+            <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+          </div>
+          <div class="mb-4">
+            <label for="email" class="block text-gray-700 font-semibold mb-2">E-mail</label>
+            <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+          </div>
+          <div class="mb-4">
+            <label for="message" class="block text-gray-700 font-semibold mb-2">Mensagem</label>
+            <textarea id="message" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto px-6 text-center">
+      <p class="mb-4">&copy; 2025 Infoline. Todos os direitos reservados.</p>
+      <div class="space-x-4">
+        <a href="#" class="hover:text-blue-400">Política de Privacidade</a>
+        <a href="#" class="hover:text-blue-400">Termos de Uso</a>
+        <a href="#contact" class="hover:text-blue-400">Suporte</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Basic JavaScript for form submission alert (replace with actual backend integration) -->
+  <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Formulário enviado! Entraremos em contato em breve.');
+      this.reset();
+    });
+  </script>
+</body>
+</html>
